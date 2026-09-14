@@ -1,6 +1,3 @@
-/* ==========================================================================
-   全体の基本スタイル
-   ========================================================================== */
 body {
     font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
     background-color: #f4f7f9; /* 薄いグレーの背景で落ち着いた雰囲気に */
@@ -19,10 +16,8 @@ h1 {
     text-align: center;
 }
 
-/* ==========================================================================
-   フォーム全体のカードデザイン
-   ========================================================================== */
-.subject-form {
+/* フォーム全体のカードデザイン */
+.revel-form {
     background-color: #ffffff;
     padding: 30px;
     border-radius: 8px; /* 角を少し丸く */
@@ -32,10 +27,8 @@ h1 {
     box-sizing: border-box;
 }
 
-/* ==========================================================================
-   ラベルとセレクトボックスの配置
-   ========================================================================== */
-.subject-form label {
+/* ラベルとセレクトボックスの配置 */
+.revel-form label {
     display: block;
     font-size: 14px;
     font-weight: bold;
@@ -45,12 +38,12 @@ h1 {
 }
 
 /* 最初のラベルだけ上の余白を詰める */
-.subject-form label:first-of-type {
+.revel-form label:first-of-type {
     margin-top: 0;
 }
 
 /* セレクトボックスの見た目をスタイリッシュに */
-.subject-form select {
+.revel-form select {
     width: 100%;
     padding: 10px 12px;
     font-size: 16px; /* スマホでズームされないちょうどいい大きさ */
@@ -64,14 +57,12 @@ h1 {
 }
 
 /* セレクトボックスが選択された（フォーカスした）とき */
-.subject-form select:focus {
+.revel-form select:focus {
     border-color: #3182ce; /* 青色の枠線に変わる */
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
 }
 
-/* ==========================================================================
-   決定ボタンのスタイル
-   ========================================================================== */
+/* 決定ボタンのスタイル */
 #addRoutineBtn {
     width: 100%;
     background-color: #3182ce; /* スッキリした青色 */
