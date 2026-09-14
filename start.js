@@ -1,116 +1,58 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const schoolSelect = document.getElementById("schoolSelect");
-    const gradeSelect = document.getElementById("gradeSelect");
-    const subjectSelect = document.getElementById("subjectSelect");
-    const addRoutineBtn = document.getElementById("addRoutineBtn"); // HTMLのIDに合わせました
+    // DOM要素の参照を取得
+    const revelSelect = document.getElementById("revelSelect");
+    const addRoutineBtn = document.getElementById("addRoutineBtn");
 
-    // 共通の科目更新関数（学校と学年の状態を見て科目を書き換える）
-    const updateSubjects = () => {
-        const selectedSchool = schoolSelect.value;
-        const selectedGrade = gradeSelect.value;
+    // 必要な要素がHTML内に存在するか安全対策としてチェック
+    if (!revelSelect || !addRoutineBtn) {
+        console.error("エラー: 必要なフォーム要素（revelSelect または addRoutineBtn）が見つかりません。");
+        return;
+    }
 
-        // 科目のセレクトボックスを一度空にする
-        subjectSelect.innerHTML = "";
-        let subjects = [];
+    // ローカルストレージに前回選択したレベルが保存されている場合は自動選択
+    const SAVED_LEVEL_KEY = "selected_test_level";
+    const savedLevel = localStorage.getItem(SAVED_LEVEL_KEY);
+    if (savedLevel) {
+        // 保存された値がセレクトボックスの選択肢にあるか確認してセット
+        const optionExists = Array.from(revelSelect.options).some(opt => opt.value === savedLevel);
+        if (optionExists) {
+            revelSelect.value = savedLevel;
+        }
+    }
 
-        // 学校と学年によって科目を分岐
-        if (selectedSchool === "elementary") {
-            subjects = [
-                { value: "japanese", text: "国語" },
-                { value: "math", text: "算数" },
-                { value: "science", text: "理科" },
-                { value: "social", text: "社会" },
-            ];
-        } else if (selectedSchool === "junior-high") {
-            subjects = [
-                { value: "japanese", text: "国語" },
-                { value: "math", text: "数学" },
-                { value: "science", text: "理科" },
-                { value: "social", text: "社会" },
-                { value: "english", text: "英語" }
-            ];
-        } else if (selectedSchool === "high") {
-            if (selectedGrade === "1") {
-                subjects = [
-                    { value: "math1", text: "数学I" },
-                    { value: "mathA", text: "数学A" },
-                    { value: "english-word", text: "英語：単語" },
-                    { value: "english-grammar", text: "英語：文法" },
-                    { value: "english-reading", text: "英語：長文" }
-                ];
-            } else if (selectedGrade === "2") {
-                subjects = [
-                    { value: "math1", text: "数学I" },
-                    { value: "mathA", text: "数学A" },
-                    { value: "math2", text: "数学II" },
-                    { value: "mathB", text: "数学B" },
-                    { value: "english-word", text: "英語：単語" },
-                    { value: "english-grammar", text: "英語：文法" },
-                    { value: "english-reading", text: "英語：長文" }
-                ];
-            } else if (selectedGrade === "3") {
-                subjects = [
-                    { value: "math1", text: "数学I" },
-                    { value: "mathA", text: "数学A" },
-                    { value: "math2", text: "数学II" },
-                    { value: "mathB", text: "数学B" },
-                    { value: "math3", text: "数学III" },
-                    { value: "mathC", text: "数学C" },
-                    { value: "english-word", text: "英語：単語" },
-                    { value: "english-grammar", text: "英語：文法" },
-                    { value: "english-reading", text: "英語：長文" }
-                ];
-            }
+    /**
+     * 選択したレベルを取得し、次のテスト画面（test.html）へ遷移する関数
+     */
+    const startTest = () => {
+        const selectedLevel = revelSelect.value;
+
+        // 次回利用時の利便性のために選択レベルをブラウザに保存
+        try {
+            localStorage.setItem(SAVED_LEVEL_KEY, selectedLevel);
+        } catch (e) {
+            console.warn("ローカルストレージへの書き込みに失敗しました:", e);
         }
 
-        // 科目のoptionタグをループで作る
-        subjects.forEach(sub => {
-            const option = document.createElement("option");
-            option.value = sub.value;
-            option.textContent = sub.text;
-            subjectSelect.appendChild(option);
+        // URLパラメータを作成（URLエンコード処理を含めて安全に生成）
+        const params = new URLSearchParams({
+            level: selectedLevel
         });
+
+        // テスト画面へ遷移（例: select.html?level=1）
+        window.location.href = `select.html?${params.toString()}`;
     };
 
-    // 1. 学校が切り替わったときに動く関数
-    schoolSelect.addEventListener("change", () => {
-        const selectedSchool = schoolSelect.value;
-        
-        // 学年のセレクトボックスを一度空にする
-        gradeSelect.innerHTML = "";
-
-        let maxGrade = 3; 
-        if (selectedSchool === "elementary") {
-            maxGrade = 6; 
-        }
-
-        // 学年のoptionタグをループで作る
-        for (let i = 1; i <= maxGrade; i++) {
-            const option = document.createElement("option");
-            option.value = i;
-            option.textContent = `${i}年`;
-            gradeSelect.appendChild(option);
-        }
-
-        // 学年が新しく生成された後に、科目を更新する
-        updateSubjects();
+    // スタートボタンをクリックした時のイベント
+    addRoutineBtn.addEventListener("click", (event) => {
+        event.preventDefault(); // フォーム送信等のデフォルト動作を防止
+        startTest();
     });
 
-    // 2. 学年が切り替わったときにも科目を更新する
-    gradeSelect.addEventListener("change", () => {
-        updateSubjects();
-    });
-    
-    // ページを読み込んだ最初にも一度科目を正しくセットする
-    updateSubjects();
-
-    // 3. 「決定」ボタンをクリックしたときの画面遷移処理
-    addRoutineBtn.addEventListener('click', () => {
-        const school = schoolSelect.value;
-        const grade = gradeSelect.value;
-        const subject = subjectSelect.value;
-
-        // 次のページ（例: test.html）へパラメータ付きで移動
-        window.location.href = `test.html?school=${school}&grade=${grade}&subject=${subject}`;
+    // セレクトボックスでEnterキーを押した時にもスタートできるように対応
+    revelSelect.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            startTest();
+        }
     });
 });
